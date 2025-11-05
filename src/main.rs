@@ -2,26 +2,32 @@ use clap;
 use clap::Parser;
 use failure::{Error, Fail};
 use regex::Regex;
+use std::fmt;
 use std::path::Path;
 
+// https://boats.gitlab.io/failure/
+//
 #[derive(Debug)]
 struct Record {
     line: usize,
     tx: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Fail)]
+#[fail(display = "Argument not provided {}", arg)]
 struct ArgErr {
     arg: &'static str,
 }
 
-impl Fail for ArgErr {}
+//impl Fail for ArgErr {}
 
+/*
 impl std::fmt::Display for ArgErr {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "Argument Not provided: {}", self.arg)
     }
 }
+*/
 
 #[derive(Parser, Debug)]
 #[command(version = "0.1.0", about = "一个简单的 grep 工具")]
@@ -51,10 +57,16 @@ fn process_file<P: AsRef<Path>>(p: P, re: Regex) -> Result<Vec<Record>, Error> {
     Ok(res)
 }
 
-fn main() -> Result<(), Error> {
+fn run() -> Result<(), Error> {
     let args = Args::parse();
     let re = Regex::new(&args.pattern)?;
     let p = process_file(args.file, re);
     println!("{:?}", p);
     Ok(())
+}
+
+fn main() {
+    if let Err(e) = run() {
+        println!("There was an error: {}", e);
+    }
 }
