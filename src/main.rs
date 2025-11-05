@@ -1,5 +1,6 @@
 use clap;
 use clap::Parser;
+use failure::{Error, Fail};
 use regex::Regex;
 use std::path::Path;
 
@@ -7,6 +8,19 @@ use std::path::Path;
 struct Record {
     line: usize,
     tx: String,
+}
+
+#[derive(Debug)]
+struct ArgErr {
+    arg: &'static str,
+}
+
+impl Fail for ArgErr {}
+
+impl std::fmt::Display for ArgErr {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Argument Not provided: {}", self.arg)
+    }
 }
 
 #[derive(Parser, Debug)]
@@ -21,9 +35,9 @@ struct Args {
     pattern: String,
 }
 
-fn process_file<P: AsRef<Path>>(p: P, re: Regex) -> Result<Vec<Record>, String> {
+fn process_file<P: AsRef<Path>>(p: P, re: Regex) -> Result<Vec<Record>, Error> {
     let mut res = Vec::new();
-    let bts = std::fs::read(p).unwrap();
+    let bts = std::fs::read(p)?;
     if let Ok(ss) = String::from_utf8(bts) {
         for (i, l) in ss.lines().enumerate() {
             if re.is_match(l) {
@@ -37,9 +51,9 @@ fn process_file<P: AsRef<Path>>(p: P, re: Regex) -> Result<Vec<Record>, String> 
     Ok(res)
 }
 
-fn main() -> Result<(), String> {
+fn main() -> Result<(), Error> {
     let args = Args::parse();
-    let re = Regex::new(&args.pattern).unwrap();
+    let re = Regex::new(&args.pattern)?;
     let p = process_file(args.file, re);
     println!("{:?}", p);
     Ok(())
