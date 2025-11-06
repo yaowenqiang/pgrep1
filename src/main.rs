@@ -63,7 +63,7 @@ where
     FF: Fn(&Path, Vec<Record>),
     EF: Fn(Error),
 {
-    let p = p.AsRef();
+    let p = p.as_ref();
     let md = p.metadata()?;
     let ft = md.file_type();
 
@@ -75,7 +75,7 @@ where
     if ft.is_dir() {
         let dd = std::fs::read_dir(p)?;
         for d in dd {
-            if let Err(e) = process_path(d?.path(), re, ff) {
+            if let Err(e) = process_path(d?.path(), re, ff, ef) {
                 ef(e);
             }
         }
@@ -88,7 +88,7 @@ fn run() -> Result<(), Error> {
     let re = Regex::new(&args.pattern)?;
     //let p = process_file(args.file, &re);
     let p = process_path(args.file, &re, &|pt, v| {
-        println!("{pt}");
+        println!("{:?}",pt);
         println!("{:?}", v);
     },
     &|e| {
