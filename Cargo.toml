@@ -1,8 +1,29 @@
+# pgrep - 一个简单的 Rust 实现的 grep 工具
+#
+# 这个项目演示了如何使用 Rust 创建一个命令行工具，用于在文件中搜索正则表达式模式。
+# 主要学习点：错误处理、命令行参数解析、文件系统操作和正则表达式匹配。
+
 [package]
 name = "pgrep"
 version = "0.1.0"
 edition = "2024"
+authors = ["YaoJack"]
+description = "一个简单的 grep 工具实现"
 
+# 依赖项配置
+#
+# clap: 命令行参数解析库，支持 derive 特性来简化参数解析
+# 文档: https://docs.rs/clap/
+# GitHub: https://github.com/clap-rs/clap
+#
+# failure: 错误处理库，提供了结构化的错误处理机制
+# 文档: https://docs.rs/failure/
+# GitHub: https://github.com/rust-lang-nursery/failure
+# 注意：failure 库已经不再维护，推荐使用 anyhow 或 thiserror
+#
+# regex: 正则表达式库，提供强大的模式匹配功能
+# 文档: https://docs.rs/regex/
+# GitHub: https://github.com/rust-lang/regex
 [dependencies]
 clap = { version = "4.5.51", features = ["derive"] }
 failure = "0.1.8"
